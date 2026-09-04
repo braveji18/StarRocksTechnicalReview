@@ -1,0 +1,13 @@
+code,engine,verdict,downtime_sec,running_query,new_query,data_loss,manual_intervention,error_message_quality,note
+F1,trino,,,,,,,,
+F2,trino,,,,,,,,
+F3,trino,,,,,,,,
+F4,trino,,,,,,,,
+F5,trino,,,,,,,,
+F6,trino,,,,,,,,
+F1,starrocks,,,,,,,,
+F2,starrocks,,,,,,,,
+F3,starrocks,,,,,,,,
+F4,starrocks,,,,,,,,
+F5,starrocks,,,,,,,,
+F6,starrocks,,,,,,,,

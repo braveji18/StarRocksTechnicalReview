@@ -1,0 +1,162 @@
+# ---------------------------------------------------------------------------
+# 로컬 스모크 스택 (스크립트 검증용)
+#
+#   이 compose 는 "스크립트가 정상 동작하는지 검증"하기 위한 축소 환경이다.
+#   실제 채점용 측정은 docs/02-test-environment.md 의 노드 사양을 갖춘
+#   별도 클러스터에서 수행하고, env/.env 의 TRINO_HOST / SR_HOST 만 바꿔
+#   동일한 스크립트를 실행한다.
+#
+#   profiles 로 부분 기동 가능:
+#     docker compose --profile lake --profile trino     up -d
+#     docker compose --profile lake --profile starrocks up -d
+#     docker compose --profile monitoring               up -d
+#   메모리가 부족한 장비에서는 두 엔진을 번갈아 기동하여 측정한다.
+#   (단, 번갈아 기동한 경우 그 사실을 결과표에 기록해야 한다 - docs/05 §1)
+# ---------------------------------------------------------------------------
+name: srtr-bench
+
+services:
+  # ---------------- 공통 레이크 계층 (Track A 의 전제) ----------------
+  minio:
+    image: minio/minio:${MINIO_VERSION}
+    profiles: [lake]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
+    ports: ["9000:9000", "9001:9001"]
+    volumes: ["minio-data:/data"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  minio-init:
+    image: minio/mc:latest
+    profiles: [lake]
+    depends_on:
+      minio: {condition: service_healthy}
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${S3_ACCESS_KEY} ${S3_SECRET_KEY} &&
+      mc mb -p local/${S3_BUCKET} &&
+      mc anonymous set download local/${S3_BUCKET} || true"
+
+  iceberg-rest:
+    image: apache/iceberg-rest-fixture:${ICEBERG_REST_VERSION}
+    profiles: [lake]
+    depends_on:
+      minio-init: {condition: service_completed_successfully}
+    ports: ["8181:8181"]
+    environment:
+      CATALOG_WAREHOUSE: s3://${S3_BUCKET}/warehouse
+      CATALOG_IO__IMPL: org.apache.iceberg.aws.s3.S3FileIO
+      CATALOG_S3_ENDPOINT: ${S3_ENDPOINT}
+      CATALOG_S3_PATH__STYLE__ACCESS: "true"
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_KEY}
+      AWS_REGION: ${S3_REGION}
+
+  # ---------------- Trino ----------------
+  trino-coordinator:
+    image: trinodb/trino:${TRINO_VERSION}
+    profiles: [trino]
+    hostname: trino-coordinator
+    ports: ["8080:8080"]
+    environment:
+      JAVA_TOOL_OPTIONS: ""
+    volumes:
+      - ./trino/etc:/etc/trino:ro
+      - ./trino/coordinator/config.properties:/etc/trino/config.properties:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /v1/info HTTP/1.0\r\n\r\n' >&3 && head -1 <&3 | grep -q 200"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  trino-worker-1: &trino-worker
+    image: trinodb/trino:${TRINO_VERSION}
+    profiles: [trino]
+    hostname: trino-worker-1
+    depends_on: [trino-coordinator]
+    volumes:
+      - ./trino/etc:/etc/trino:ro
+      - ./trino/worker/config.properties:/etc/trino/config.properties:ro
+
+  trino-worker-2:
+    <<: *trino-worker
+    hostname: trino-worker-2
+
+  # ---------------- StarRocks ----------------
+  starrocks-fe:
+    image: starrocks/fe-ubuntu:${STARROCKS_VERSION}
+    profiles: [starrocks]
+    hostname: starrocks-fe
+    ports: ["9030:9030", "8030:8030"]
+    volumes:
+      - sr-fe-meta:/opt/starrocks/fe/meta
+    command: >
+      bash -c "
+      echo 'priority_networks = 0.0.0.0/0' >> /opt/starrocks/fe/conf/fe.conf &&
+      echo 'JAVA_OPTS=\"-Xmx${SR_FE_HEAP}\"' >> /opt/starrocks/fe/conf/fe.conf &&
+      /opt/starrocks/fe/bin/start_fe.sh"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9030 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 40
+
+  starrocks-be-1: &starrocks-be
+    image: starrocks/be-ubuntu:${STARROCKS_VERSION}
+    profiles: [starrocks]
+    hostname: starrocks-be-1
+    depends_on:
+      starrocks-fe: {condition: service_healthy}
+    volumes:
+      - sr-be1-storage:/opt/starrocks/be/storage
+    command: >
+      bash -c "
+      echo 'priority_networks = 0.0.0.0/0' >> /opt/starrocks/be/conf/be.conf &&
+      echo 'mem_limit = ${SR_BE_MEM_LIMIT}' >> /opt/starrocks/be/conf/be.conf &&
+      /opt/starrocks/be/bin/start_be.sh"
+
+  starrocks-be-2:
+    <<: *starrocks-be
+    hostname: starrocks-be-2
+    volumes:
+      - sr-be2-storage:/opt/starrocks/be/storage
+
+  # ---------------- 모니터링 ----------------
+  prometheus:
+    image: prom/prometheus:latest
+    profiles: [monitoring]
+    ports: ["9090:9090"]
+    volumes: ["./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    profiles: [monitoring]
+    ports: ["9100:9100"]
+    pid: host
+    volumes: ["/:/host:ro,rslave"]
+    command: ["--path.rootfs=/host"]
+
+  grafana:
+    image: grafana/grafana:latest
+    profiles: [monitoring]
+    ports: ["3000:3000"]
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+    volumes: ["./grafana/provisioning:/etc/grafana/provisioning:ro"]
+
+volumes:
+  minio-data:
+  sr-fe-meta:
+  sr-be1-storage:
+  sr-be2-storage:
+
+networks:
+  default:
+    name: srtr-bench

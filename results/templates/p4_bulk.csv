@@ -1,0 +1,5 @@
+engine,track,scale_factor,query,completed,elapsed_sec,spilled_bytes,peak_mem_mb,note
+trino,B,1000,q09,,,,,
+trino,B,1000,q21,,,,,
+starrocks,B,1000,q09,,,,,
+starrocks,B,1000,q21,,,,,

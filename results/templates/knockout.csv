@@ -1,0 +1,11 @@
+engine,code,applies,reason
+trino,K1,n,
+trino,K2,n,
+trino,K3,n,
+trino,K4,n,
+trino,K5,n,
+starrocks,K1,n,
+starrocks,K2,n,
+starrocks,K3,n,
+starrocks,K4,n,
+starrocks,K5,n,

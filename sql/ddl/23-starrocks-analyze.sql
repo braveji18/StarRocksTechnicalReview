@@ -1,0 +1,8 @@
+ANALYZE TABLE ${SR_DB}.lineitem;
+ANALYZE TABLE ${SR_DB}.orders;
+ANALYZE TABLE ${SR_DB}.customer;
+ANALYZE TABLE ${SR_DB}.part;
+ANALYZE TABLE ${SR_DB}.partsupp;
+ANALYZE TABLE ${SR_DB}.supplier;
+ANALYZE TABLE ${SR_DB}.nation;
+ANALYZE TABLE ${SR_DB}.region;

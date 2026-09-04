@@ -1,0 +1,3 @@
+engine,compute_nodes,control_nodes,network,storage_source,storage_engine_copy,storage_cache,license,vendor_support,build_labor,ops_labor,migration_labor,total_3y,currency,note
+trino,,,,,,,,,,,,,KRW,
+starrocks,,,,,,,,,,,,,KRW,

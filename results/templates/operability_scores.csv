@@ -1,0 +1,11 @@
+engine,item,budget,score,evidence
+trino,설치·초기 구성,4,,
+trino,스케일 아웃/인,4,,
+trino,롤링 업그레이드,2,,
+trino,백업·복구,6,,
+trino,모니터링·멀티테넌시,4,,
+starrocks,설치·초기 구성,4,,
+starrocks,스케일 아웃/인,4,,
+starrocks,롤링 업그레이드,2,,
+starrocks,백업·복구,6,,
+starrocks,모니터링·멀티테넌시,4,,
