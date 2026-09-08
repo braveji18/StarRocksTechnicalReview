@@ -94,7 +94,10 @@ def score_functional() -> tuple[dict[str, float], list[str]]:
 
 def score_p1(track: str) -> tuple[dict[str, float], list[str]]:
     rows = resultio.read_csv(resultio.results_path("performance", "p1_summary.csv"))
-    sel = [r for r in rows if r.get("track") == track and r.get("cache") == "warm"]
+    # P1 은 분석 쿼리 스위트만 대상이다 (docs/01 §3.2). 대시보드(P2)는 제외한다.
+    sel = [r for r in rows
+           if r.get("track") == track and r.get("cache") == "warm"
+           and r.get("benchmark") in ("tpch", "tpcds")]
     if not sel:
         return {e: 0.0 for e in ENGINES}, [f"P1 warm 요약 없음 (track {track})"]
     vals: dict[str, float] = {}
