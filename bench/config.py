@@ -43,7 +43,9 @@ _DEFAULTS = {
     "SLA_TARGET_CONCURRENT_USERS": "50",
     "TPCH_SCHEMA": "",            # 비우면 sf<SCALE_FACTOR>. tiny(=SF0.01) 등 지정 가능
     "PARTITION_GRAIN": "month",   # month | year | none - 규모에 맞춰 조절
-    "SR_BUCKETS": "16",
+    "SR_BUCKETS": "16",        # 아래 두 값이 비면 이 값을 쓴다
+    "SR_BUCKETS_FACT": "",     # lineitem/orders/lineitem_flat
+    "SR_BUCKETS_DIM": "",      # 나머지 차원 테이블
     "SR_REPLICAS": "1",
 }
 
@@ -103,6 +105,12 @@ def substitutions() -> dict[str, str]:
             return ""
         return f", partitioning = ARRAY['{grain}({col})']"
 
+    def _sr_part(col: str) -> str:
+        """StarRocks 식 파티션 절. 레이크와 같은 입도를 쓰도록 같은 노브를 따른다."""
+        if grain in ("none", ""):
+            return ""
+        return f"\nPARTITION BY date_trunc('{grain}', {col})"
+
     return {
         "SCHEMA": get("LAKE_SCHEMA"),
         "LINEITEM_PART": _part("l_shipdate"),
@@ -114,6 +122,10 @@ def substitutions() -> dict[str, str]:
         "SR_CATALOG": get("SR_EXTERNAL_CATALOG"),
         "SR_DB": get("SR_NATIVE_DB"),
         "BUCKETS": get("SR_BUCKETS"),
+        "BUCKETS_FACT": get("SR_BUCKETS_FACT") or get("SR_BUCKETS"),
+        "BUCKETS_DIM": get("SR_BUCKETS_DIM") or get("SR_BUCKETS"),
+        "SR_PARTITION_LINEITEM": _sr_part("l_shipdate"),
+        "SR_PARTITION_ORDERS": _sr_part("o_orderdate"),
         "REPLICAS": get("SR_REPLICAS"),
         "ICEBERG_REST_URI": get("ICEBERG_REST_URI"),
         "HMS_URI": get("HMS_URI"),

@@ -2,7 +2,7 @@
 -- Track B: StarRocks 네이티브 테이블 (docs/03 §3)
 -- 정렬키/분산키/버킷 수는 StarRocks 권장 튜닝을 적용한다.
 -- 적용한 튜닝 내역은 반드시 결과표에 기록한다 (비대칭 튜닝 명시 원칙).
--- 치환 변수: ${SR_DB} ${SR_CATALOG} ${SCHEMA} ${BUCKETS} ${REPLICAS}
+-- 치환 변수: ${SR_DB} ${BUCKETS_FACT} ${BUCKETS_DIM} ${REPLICAS} ${SR_PARTITION_*}
 -- ===========================================================================
 CREATE DATABASE IF NOT EXISTS ${SR_DB};
 
@@ -24,9 +24,8 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.lineitem (
     l_shipmode      VARCHAR(10)   NOT NULL,
     l_comment       VARCHAR(44)   NOT NULL
 )
-DUPLICATE KEY (l_orderkey, l_partkey, l_suppkey, l_linenumber)
-PARTITION BY date_trunc('month', l_shipdate)
-DISTRIBUTED BY HASH (l_orderkey) BUCKETS ${BUCKETS}
+DUPLICATE KEY (l_orderkey, l_partkey, l_suppkey, l_linenumber)${SR_PARTITION_LINEITEM}
+DISTRIBUTED BY HASH (l_orderkey) BUCKETS ${BUCKETS_FACT}
 PROPERTIES ("replication_num" = "${REPLICAS}");
 
 CREATE TABLE IF NOT EXISTS ${SR_DB}.orders (
@@ -40,9 +39,8 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.orders (
     o_shippriority  INT           NOT NULL,
     o_comment       VARCHAR(79)   NOT NULL
 )
-DUPLICATE KEY (o_orderkey)
-PARTITION BY date_trunc('month', o_orderdate)
-DISTRIBUTED BY HASH (o_orderkey) BUCKETS ${BUCKETS}
+DUPLICATE KEY (o_orderkey)${SR_PARTITION_ORDERS}
+DISTRIBUTED BY HASH (o_orderkey) BUCKETS ${BUCKETS_FACT}
 PROPERTIES ("replication_num" = "${REPLICAS}");
 
 CREATE TABLE IF NOT EXISTS ${SR_DB}.customer (
@@ -56,7 +54,7 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.customer (
     c_comment    VARCHAR(117)  NOT NULL
 )
 DUPLICATE KEY (c_custkey)
-DISTRIBUTED BY HASH (c_custkey) BUCKETS ${BUCKETS}
+DISTRIBUTED BY HASH (c_custkey) BUCKETS ${BUCKETS_DIM}
 PROPERTIES ("replication_num" = "${REPLICAS}");
 
 CREATE TABLE IF NOT EXISTS ${SR_DB}.part (
@@ -71,7 +69,7 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.part (
     p_comment     VARCHAR(23)   NOT NULL
 )
 DUPLICATE KEY (p_partkey)
-DISTRIBUTED BY HASH (p_partkey) BUCKETS ${BUCKETS}
+DISTRIBUTED BY HASH (p_partkey) BUCKETS ${BUCKETS_DIM}
 PROPERTIES ("replication_num" = "${REPLICAS}");
 
 CREATE TABLE IF NOT EXISTS ${SR_DB}.partsupp (
@@ -82,7 +80,7 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.partsupp (
     ps_comment    VARCHAR(199)  NOT NULL
 )
 DUPLICATE KEY (ps_partkey, ps_suppkey)
-DISTRIBUTED BY HASH (ps_partkey) BUCKETS ${BUCKETS}
+DISTRIBUTED BY HASH (ps_partkey) BUCKETS ${BUCKETS_DIM}
 PROPERTIES ("replication_num" = "${REPLICAS}");
 
 CREATE TABLE IF NOT EXISTS ${SR_DB}.supplier (
@@ -95,7 +93,7 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.supplier (
     s_comment   VARCHAR(101)  NOT NULL
 )
 DUPLICATE KEY (s_suppkey)
-DISTRIBUTED BY HASH (s_suppkey) BUCKETS ${BUCKETS}
+DISTRIBUTED BY HASH (s_suppkey) BUCKETS ${BUCKETS_DIM}
 PROPERTIES ("replication_num" = "${REPLICAS}");
 
 CREATE TABLE IF NOT EXISTS ${SR_DB}.nation (
@@ -155,6 +153,6 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.lineitem_flat (
     p_container     VARCHAR(10)   NOT NULL,
     revenue         DECIMAL(38,4) NOT NULL
 )
-DUPLICATE KEY (l_orderkey, l_linenumber, l_shipdate)
-DISTRIBUTED BY HASH (l_orderkey) BUCKETS ${BUCKETS}
+DUPLICATE KEY (l_orderkey, l_linenumber, l_shipdate)${SR_PARTITION_LINEITEM}
+DISTRIBUTED BY HASH (l_orderkey) BUCKETS ${BUCKETS_FACT}
 PROPERTIES ("replication_num" = "${REPLICAS}");

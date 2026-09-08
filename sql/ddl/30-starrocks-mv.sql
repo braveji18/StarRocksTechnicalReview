@@ -7,7 +7,7 @@
 --   한쪽만 사전 계산을 허용한 측정값은 채점에 사용할 수 없다.
 -- ===========================================================================
 CREATE MATERIALIZED VIEW IF NOT EXISTS ${SR_DB}.mv_daily_revenue
-DISTRIBUTED BY HASH (l_shipdate) BUCKETS ${BUCKETS}
+DISTRIBUTED BY HASH (l_shipdate) BUCKETS ${BUCKETS_DIM}
 REFRESH ASYNC
 PROPERTIES ("replication_num" = "${REPLICAS}")
 AS
@@ -21,7 +21,7 @@ FROM ${SR_DB}.lineitem
 GROUP BY l_shipdate, l_returnflag, l_linestatus;
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS ${SR_DB}.mv_nation_revenue
-DISTRIBUTED BY HASH (n_name) BUCKETS ${BUCKETS}
+DISTRIBUTED BY HASH (n_name) BUCKETS ${BUCKETS_DIM}
 REFRESH ASYNC
 PROPERTIES ("replication_num" = "${REPLICAS}")
 AS

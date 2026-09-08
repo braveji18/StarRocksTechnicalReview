@@ -104,12 +104,17 @@
 cp env/.env.example env/.env      # 버전·호스트·SLA 확정 후
 scripts/00-preflight.sh           # 도구 점검 + 측정 하네스 구성
 scripts/run-all.sh smoke          # 로컬 축소 환경에서 스크립트 검증
-scripts/run-all.sh measure        # 실 클러스터 측정
+
+scripts/13-apply-profile.sh medium  # 규모 선택 (smoke|small|medium|large)
+scripts/run-all.sh measure          # 실 클러스터 측정
 ```
+
+채점 가능한 규모(SF100 이상)로 올릴 때는 [docs/10](docs/10-scaling-guide.md) 을 따른다.
+노드 사양·메모리 대칭·단계별 절차가 거기에 있다.
 
 | 디렉터리 | 내용 |
 |---|---|
-| `env/` | 로컬 스모크 스택(docker compose) 및 두 엔진 설정 파일 |
+| `env/` | 로컬 스모크 스택(docker compose), 두 엔진 설정, 규모별 프로파일 |
 | `sql/` | TPC-H 22개 · 대시보드 8개 · 기능 체크리스트 · 적재 DDL |
 | `bench/` | 두 엔진을 동일 경로로 구동하는 파이썬 측정 하네스 |
 | `scripts/` | 번호순 실행 스크립트 (00 사전점검 ~ 12 채점) |
@@ -139,3 +144,4 @@ scripts/run-all.sh measure        # 실 클러스터 측정
 | [docs/07-cost-model.md](docs/07-cost-model.md) | 3년 TCO 산정 모델 |
 | [docs/08-result-templates.md](docs/08-result-templates.md) | 결과 기록 양식 및 최종 권고서 양식 |
 | [docs/09-test-scripts.md](docs/09-test-scripts.md) | 테스트 스크립트 사용 안내 (실행 방법) |
+| [docs/10-scaling-guide.md](docs/10-scaling-guide.md) | 규모별 환경 구성 및 SF100+ 측정 가이드 |

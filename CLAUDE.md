@@ -30,6 +30,7 @@ scripts/08-run-p3.sh <engine> <track>         # concurrency
 scripts/09-run-p6.sh <engine> <track>         # resource efficiency via Prometheus
 scripts/11-fault-inject.sh <engine> F1..F6    # fault scenarios under load
 scripts/12-score.sh --primary-track B         # mechanical scoring
+scripts/13-apply-profile.sh <smoke|small|medium|large>   # scale profile
 scripts/run-all.sh smoke|measure
 ```
 
@@ -79,6 +80,10 @@ Decisions already made. Preserve them; do not silently relax them.
 - **Scoring is mechanical** — every point traces to a CSV row through a stated formula. No
   subjective score fields, no manual adjustment path.
 - **Knock-outs (K1–K5)** override total score; thresholds are fixed at kickoff.
+- **Equal query-available memory, not just equal container memory.** StarRocks BE is C++ with no
+  JVM headroom, so identical container sizes hand it ~3x more usable query memory than Trino.
+  Pin Trino `query.max-memory-per-node` and StarRocks `query_mem_limit` to the *same* value and
+  verify actual peak memory before measuring ([docs/10 §4–5](docs/10-scaling-guide.md)).
 
 ## Upstream projects under review
 
