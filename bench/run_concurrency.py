@@ -14,6 +14,7 @@ import random
 import sys
 import threading
 import time
+from collections import Counter
 from dataclasses import dataclass
 
 from . import config, engines, resultio, sqlfile
@@ -24,12 +25,16 @@ sys.stdout.reconfigure(line_buffering=True)
 
 HEAVY_QUERIES = {"q09", "q21", "q18"}
 
+# 워커가 연속 실패만 반복하면 더 측정할 것이 없다. 조기에 접는다.
+MAX_CONSECUTIVE_ERRORS = 20
+
 
 @dataclass
 class Sample:
     query: str
     elapsed_ms: float
     ok: bool
+    error: str = ""
 
 
 def build_mix() -> list[tuple[str, str, float]]:
@@ -69,13 +74,25 @@ def worker(engine_name: str, track: str, mix, stop_at: float,
     local: list[Sample] = []
     try:
         with engines.make(engine_name, track=track) as eng:
+            consecutive_errors = 0
             while time.time() < stop_at:
                 name, sql = pick(mix, rng)
                 res = eng.execute(sql, timeout_sec=timeout)
                 if time.time() >= measure_from:
-                    local.append(Sample(name, res.elapsed_ms, res.ok))
+                    local.append(Sample(name, res.elapsed_ms, res.ok,
+                                        res.error[:200] if not res.ok else ""))
+                if res.ok:
+                    consecutive_errors = 0
+                    continue
+                # 쿼리가 즉시 실패하면 루프가 폭주하여 수백만 건의 무의미한 샘플이
+                # 쌓이고 부하 발생기 자체가 불안정해진다. 연속 실패 시 백오프하고,
+                # 회복 기미가 없으면 이 워커를 접는다.
+                consecutive_errors += 1
+                time.sleep(min(0.05 * (2 ** min(consecutive_errors, 6)), 2.0))
+                if consecutive_errors >= MAX_CONSECUTIVE_ERRORS:
+                    break
     except Exception as exc:  # 접속 자체가 실패한 경우도 기록되어야 한다
-        local.append(Sample("connect", 0.0, False))
+        local.append(Sample("connect", 0.0, False, str(exc)[:200]))
         print(f"  워커 오류: {exc}")
     with lock:
         samples.extend(local)
@@ -107,7 +124,10 @@ def run_level(engine_name: str, track: str, users: int, duration: int,
     total = len(samples)
     errors = total - len(ok)
     elapsed = max(time.time() - measure_from, 1e-9)
+    # 에러율이 높을 때 원인을 알 수 없으면 조치할 수 없다. 최빈 오류를 남긴다.
+    err_counts = Counter(s.error for s in samples if not s.ok and s.error)
     return {
+        "top_errors": err_counts.most_common(3),
         "users": users,
         "total": total,
         "errors": errors,
@@ -143,12 +163,23 @@ def main() -> int:
         r = run_level(args.engine, args.track, users, args.duration,
                       args.warmup, args.timeout)
         results.append(r)
+        def _csv(v: float) -> str | float:
+            return "" if v != v else round(v, 1)
+
         rows.append([args.track, args.engine, users, round(r["duration_sec"] / 60, 2),
-                     round(r["qps"], 3), round(r["p50"], 1), round(r["p95"], 1),
-                     round(r["p99"], 1), round(r["error_rate"], 4),
-                     r["total"], r["errors"], resultio.now()])
-        print(f"  QPS {r['qps']:.2f}  p50 {r['p50']:.0f}ms  p95 {r['p95']:.0f}ms  "
-              f"p99 {r['p99']:.0f}ms  에러율 {r['error_rate']*100:.2f}%")
+                     round(r["qps"], 3), _csv(r["p50"]), _csv(r["p95"]),
+                     _csv(r["p99"]), round(r["error_rate"], 4),
+                     r["total"], r["errors"], resultio.now(),
+                     r["top_errors"][0][0][:200] if r["top_errors"] else ""])
+        def _ms(v: float) -> str:
+            # 성공 샘플이 하나도 없으면 백분위수가 nan 이 된다. nan 을 숫자처럼
+            # 찍으면 오해를 부르므로 명시적으로 표시한다.
+            return "-" if v != v else f"{v:.0f}ms"
+
+        print(f"  QPS {r['qps']:.2f}  p50 {_ms(r['p50'])}  p95 {_ms(r['p95'])}  "
+              f"p99 {_ms(r['p99'])}  에러율 {r['error_rate']*100:.2f}%")
+        for msg, cnt in r["top_errors"]:
+            print(f"    오류 x{cnt}: {msg[:160]}")
 
         if r["error_rate"] > 0.05:
             print("  종료 조건: 에러율 5% 초과 - 이후 단계 중단")
@@ -160,7 +191,7 @@ def main() -> int:
     out = resultio.results_path("performance", "p3_concurrency.csv")
     resultio.append_csv(out, ["track", "engine", "concurrent_users", "duration_min",
                               "qps", "p50_ms", "p95_ms", "p99_ms", "error_rate",
-                              "total_queries", "errors", "ts"], rows)
+                              "total_queries", "errors", "ts", "top_error"], rows)
 
     # 포화점: QPS 가 직전 단계 대비 5% 미만으로 증가하기 시작하는 지점
     saturation, best_qps = None, 0.0

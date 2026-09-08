@@ -58,7 +58,7 @@ scripts/12-score.sh --primary-track B          # 채점 집계
 메모리가 부족하면 `scripts/01-env-up.sh trino` 와 `... starrocks` 로 번갈아 기동한다.
 **번갈아 기동한 경우 그 사실을 결과표에 기록해야 한다** — 동시 기동과 조건이 다르다.
 
-## 3.1 이미 구축된 클러스터에 붙이기
+### 3.1 이미 구축된 클러스터에 붙이기
 
 `scripts/01-env-up.sh` 를 쓰지 않고 기존 Trino / StarRocks 에 바로 붙일 수 있다.
 `env/.env` 의 접속 값과 스키마 이름만 맞추면 된다.
@@ -78,6 +78,35 @@ SR_EXTERNAL_CATALOG=iceberg # StarRocks 에 이미 등록된 외부 카탈로그
 
 이 방식은 **Track A 측정에 바로 쓸 수 있다.** 두 엔진이 이미 같은 테이블을 보고 있기 때문이다.
 Track B 는 StarRocks 네이티브 적재가 필요하므로 `scripts/03-load-dataset.sh --engine starrocks` 를 수행한다.
+
+### 3.2 규모·환경에 따라 조정하는 설정
+
+기본값으로 안 되는 환경이 실제로 존재한다. 아래 값은 `env/.env` 에서 조정한다.
+
+| 변수 | 기본 | 언제 바꾸는가 |
+|---|---|---|
+| `SCALE_FACTOR` | 1 | 채점 측정은 100 이상 |
+| `TPCH_SCHEMA` | (`sf<SF>`) | Trino `tpch` 커넥터는 `tiny`/`sf1`/`sf100`… 만 제공한다. `tiny`(=SF0.01) 처럼 `sf<숫자>` 규칙에 없는 스키마를 쓸 때 지정 |
+| `PARTITION_GRAIN` | `month` | 파티션이 잘게 쪼개지면 **파티션 라이터가 파티션마다 버퍼를 잡아 메모리가 폭증**한다. SF1 에 `month` 면 84개 파티션이 생겨 저메모리 워커는 OOM 된다. 소규모는 `year` 또는 `none` |
+| `WAREHOUSE` | `s3://<버킷>/warehouse` | 기존 레이크의 경로 규약을 따를 때 직접 지정 |
+| `S3_BUCKET` | `lake` | 기존 레이크의 버킷명 |
+
+`scripts/03-load-dataset.sh` 옵션:
+
+| 옵션 | 용도 |
+|---|---|
+| `--skip-external-catalog` | **기존 랩에서는 필수.** 외부 카탈로그 DDL 은 `DROP CATALOG` 를 포함하므로, 이미 등록된 카탈로그를 재사용할 때 반드시 건너뛴다 |
+| `--normalize` | 파일 크기 정규화 |
+| `--preagg` | Track B 사전 계산 (StarRocks MV + Trino 사전집계 테이블, 반드시 함께) |
+
+#### 적재가 실패할 때
+
+| 증상 | 원인 | 조치 |
+|---|---|---|
+| 워커가 exit 137 로 죽음 | 컨테이너 OOM. 파티션 라이터 버퍼 또는 조인 메모리 | `PARTITION_GRAIN` 을 낮추거나 노드 메모리를 늘린다 |
+| `Cannot find source column: l_shipdate` | tpch 커넥터 컬럼명에 접두사가 없음 | 이미 수정됨 — DDL 이 전 컬럼에 명시적 별칭을 부여한다 |
+| `Unknown table '<db>.lineitem_flat'` | Track B 네이티브에 대시보드 테이블 미적재 | `03-load-dataset.sh --engine starrocks` 재실행 |
+| 동시성 측정에서 에러율 100% | 엔진이 부하를 감당 못 함 | `p3_concurrency.csv` 의 `top_error` 열에서 원인을 확인한다 |
 
 ## 4. TPC-H 쿼리의 이식성 처리
 
