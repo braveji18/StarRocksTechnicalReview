@@ -1,0 +1,89 @@
+track,engine,cache,benchmark,query,run1_ms,run2_ms,run3_ms,median_ms,runs_ms,scan_bytes,peak_mem_mb,cpu_sec,status,error,cache_policy,ts
+A,trino,warm,tpch,q01,133.1,122.9,124.1,124.1,133.1;122.9;124.1,1410536,0.0,0.02,OK,,none,2026-09-08 00:22:09
+A,trino,warm,tpch,q02,460.8,356.2,393.1,393.1,460.8;356.2;393.1,684193,2.1,0.1,OK,,none,2026-09-08 00:22:11
+A,trino,warm,tpch,q03,209.2,197.7,209.7,209.2,209.2;197.7;209.7,1875487,1.0,0.05,OK,,none,2026-09-08 00:22:12
+A,trino,warm,tpch,q04,171.1,191.4,156.0,171.1,171.1;191.4;156.0,1773706,0.1,0.03,OK,,none,2026-09-08 00:22:13
+A,trino,warm,tpch,q05,323.1,333.8,387.3,333.8,323.1;333.8;387.3,1910122,1.1,0.06,OK,,none,2026-09-08 00:22:15
+A,trino,warm,tpch,q06,84.8,90.7,110.9,90.7,84.8;90.7;110.9,1408380,0.0,0.01,OK,,none,2026-09-08 00:22:15
+A,trino,warm,tpch,q07,288.7,294.2,327.2,294.2,288.7;294.2;327.2,1899674,2.1,0.06,OK,,none,2026-09-08 00:22:17
+A,trino,warm,tpch,q08,445.7,447.3,408.4,445.7,445.7;447.3;408.4,1913522,3.0,0.06,OK,,none,2026-09-08 00:22:19
+A,trino,warm,tpch,q09,286.2,272.1,247.7,272.1,286.2;272.1;247.7,5409378,10.7,0.06,OK,,none,2026-09-08 00:22:20
+A,trino,warm,tpch,q10,169.8,191.6,161.5,169.8,169.8;191.6;161.5,1956283,1.2,0.04,OK,,none,2026-09-08 00:22:21
+A,trino,warm,tpch,q11,209.9,202.3,195.8,202.3,209.9;202.3;195.8,608590,2.0,0.05,OK,,none,2026-09-08 00:22:22
+A,trino,warm,tpch,q12,114.9,126.5,126.6,126.5,114.9;126.5;126.6,1761178,0.1,0.01,OK,,none,2026-09-08 00:22:23
+A,trino,warm,tpch,q13,111.7,118.7,537.5,118.7,111.7;118.7;537.5,694714,0.3,0.03,OK,,none,2026-09-08 00:22:24
+A,trino,warm,tpch,q14,98.3,108.6,95.6,98.3,98.3;108.6;95.6,1474075,0.2,0.01,OK,,none,2026-09-08 00:22:25
+A,trino,warm,tpch,q15,127.5,120.2,136.4,127.5,127.5;120.2;136.4,2829931,0.3,0.03,OK,,none,2026-09-08 00:22:25
+A,trino,warm,tpch,q16,167.9,141.8,166.4,166.4,167.9;141.8;166.4,492600,0.1,0.04,OK,,none,2026-09-08 00:22:26
+A,trino,warm,tpch,q17,134.1,138.8,128.2,134.1,134.1;138.8;128.2,1537219,2.6,0.02,OK,,none,2026-09-08 00:22:27
+A,trino,warm,tpch,q18,151.6,163.4,164.5,163.4,151.6;163.4;164.5,3530942,1.0,0.04,OK,,none,2026-09-08 00:22:28
+A,trino,warm,tpch,q19,102.8,125.6,114.2,114.2,102.8;125.6;114.2,1503444,0.3,0.02,OK,,none,2026-09-08 00:22:28
+A,trino,warm,tpch,q20,197.2,200.3,246.4,200.3,197.2;200.3;246.4,1760779,1.1,0.04,OK,,none,2026-09-08 00:22:29
+A,trino,warm,tpch,q21,215.4,246.8,212.7,215.4,215.4;246.8;212.7,5308567,3.5,0.06,OK,,none,2026-09-08 00:22:31
+A,trino,warm,tpch,q22,133.5,127.1,150.0,133.5,133.5;127.1;150.0,526751,0.1,0.02,OK,,none,2026-09-08 00:22:31
+B,trino,warm,tpch,q01,79.4,85.8,74.7,79.4,79.4;85.8;74.7,1410536,0.0,0.01,OK,,none,2026-09-08 00:22:32
+B,trino,warm,tpch,q02,197.4,211.3,248.4,211.3,197.4;211.3;248.4,684193,2.1,0.05,OK,,none,2026-09-08 00:22:33
+B,trino,warm,tpch,q03,131.3,130.9,149.0,131.3,131.3;130.9;149.0,1875487,1.0,0.03,OK,,none,2026-09-08 00:22:34
+B,trino,warm,tpch,q04,120.8,127.5,117.5,120.8,120.8;127.5;117.5,1773706,0.1,0.02,OK,,none,2026-09-08 00:22:35
+B,trino,warm,tpch,q05,219.2,237.9,207.1,219.2,219.2;237.9;207.1,1910122,1.1,0.04,OK,,none,2026-09-08 00:22:36
+B,trino,warm,tpch,q06,86.5,53.9,54.0,54.0,86.5;53.9;54.0,1408380,0.0,0.01,OK,,none,2026-09-08 00:22:36
+B,trino,warm,tpch,q07,205.3,182.0,178.7,182.0,205.3;182.0;178.7,1899674,2.1,0.03,OK,,none,2026-09-08 00:22:37
+B,trino,warm,tpch,q08,346.2,341.6,337.7,341.6,346.2;341.6;337.7,1913522,3.0,0.04,OK,,none,2026-09-08 00:22:39
+B,trino,warm,tpch,q09,197.2,221.7,224.1,221.7,197.2;221.7;224.1,5409378,10.7,0.05,OK,,none,2026-09-08 00:22:40
+B,trino,warm,tpch,q10,143.3,133.6,146.5,143.3,143.3;133.6;146.5,1956283,1.2,0.03,OK,,none,2026-09-08 00:22:41
+B,trino,warm,tpch,q11,133.1,134.8,121.3,133.1,133.1;134.8;121.3,608590,2.0,0.03,OK,,none,2026-09-08 00:22:41
+B,trino,warm,tpch,q12,127.3,110.1,115.6,115.6,127.3;110.1;115.6,1761178,0.1,0.01,OK,,none,2026-09-08 00:22:42
+B,trino,warm,tpch,q13,85.9,81.4,86.9,85.9,85.9;81.4;86.9,694714,0.3,0.02,OK,,none,2026-09-08 00:22:42
+B,trino,warm,tpch,q14,82.8,80.1,82.0,82.0,82.8;80.1;82.0,1474075,0.2,0.01,OK,,none,2026-09-08 00:22:43
+B,trino,warm,tpch,q15,122.5,97.9,97.0,97.9,122.5;97.9;97.0,2829931,0.3,0.02,OK,,none,2026-09-08 00:22:43
+B,trino,warm,tpch,q16,112.7,120.2,107.3,112.7,112.7;120.2;107.3,492600,0.1,0.02,OK,,none,2026-09-08 00:22:44
+B,trino,warm,tpch,q17,81.8,84.5,83.0,83.0,81.8;84.5;83.0,1537219,0.2,0.01,OK,,none,2026-09-08 00:22:44
+B,trino,warm,tpch,q18,116.6,143.7,192.4,143.7,116.6;143.7;192.4,3530942,1.0,0.03,OK,,none,2026-09-08 00:22:45
+B,trino,warm,tpch,q19,87.6,89.0,89.0,89.0,87.6;89.0;89.0,1503444,0.3,0.01,OK,,none,2026-09-08 00:22:45
+B,trino,warm,tpch,q20,156.9,169.9,196.9,169.9,156.9;169.9;196.9,1760779,1.1,0.03,OK,,none,2026-09-08 00:22:46
+B,trino,warm,tpch,q21,169.4,177.4,191.2,177.4,169.4;177.4;191.2,5308567,3.4,0.04,OK,,none,2026-09-08 00:22:47
+B,trino,warm,tpch,q22,108.2,98.3,98.3,98.3,108.2;98.3;98.3,526751,0.1,0.01,OK,,none,2026-09-08 00:22:48
+A,starrocks,warm,tpch,q01,38.8,33.7,37.9,37.9,38.8;33.7;37.9,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:48
+A,starrocks,warm,tpch,q02,104.4,104.6,100.6,104.4,104.4;104.6;100.6,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:49
+A,starrocks,warm,tpch,q03,77.3,86.9,93.6,86.9,77.3;86.9;93.6,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:49
+A,starrocks,warm,tpch,q04,54.2,54.0,60.2,54.2,54.2;54.0;60.2,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:49
+A,starrocks,warm,tpch,q05,123.8,125.9,132.0,125.9,123.8;125.9;132.0,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:50
+A,starrocks,warm,tpch,q06,28.1,25.3,26.0,26.0,28.1;25.3;26.0,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:50
+A,starrocks,warm,tpch,q07,119.6,116.4,118.5,118.5,119.6;116.4;118.5,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:51
+A,starrocks,warm,tpch,q08,137.0,143.1,145.4,143.1,137.0;143.1;145.4,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:52
+A,starrocks,warm,tpch,q09,118.8,110.0,110.2,110.2,118.8;110.0;110.2,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:52
+A,starrocks,warm,tpch,q10,89.2,88.2,86.3,88.2,89.2;88.2;86.3,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:53
+A,starrocks,warm,tpch,q11,101.5,102.5,105.1,102.5,101.5;102.5;105.1,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:53
+A,starrocks,warm,tpch,q12,51.2,51.9,58.6,51.9,51.2;51.9;58.6,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:54
+A,starrocks,warm,tpch,q13,50.9,55.9,50.9,50.9,50.9;55.9;50.9,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:54
+A,starrocks,warm,tpch,q14,43.7,46.3,45.0,45.0,43.7;46.3;45.0,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:54
+A,starrocks,warm,tpch,q15,64.6,63.2,66.7,64.6,64.6;63.2;66.7,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:54
+A,starrocks,warm,tpch,q16,66.0,64.2,68.4,66.0,66.0;64.2;68.4,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:55
+A,starrocks,warm,tpch,q17,42.2,41.4,43.6,42.2,42.2;41.4;43.6,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:55
+A,starrocks,warm,tpch,q18,85.2,82.8,83.8,83.8,85.2;82.8;83.8,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:56
+A,starrocks,warm,tpch,q19,47.3,47.4,46.6,47.3,47.3;47.4;46.6,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:56
+A,starrocks,warm,tpch,q20,92.6,95.9,98.1,95.9,92.6;95.9;98.1,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:56
+A,starrocks,warm,tpch,q21,155.2,155.8,122.4,155.2,155.2;155.8;122.4,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:57
+A,starrocks,warm,tpch,q22,66.6,66.7,69.7,66.7,66.6;66.7;69.7,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:57
+B,starrocks,warm,tpch,q01,39.4,42.0,35.5,39.4,39.4;42.0;35.5,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:58
+B,starrocks,warm,tpch,q02,54.7,40.9,57.1,54.7,54.7;40.9;57.1,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:58
+B,starrocks,warm,tpch,q03,78.0,73.8,68.9,73.8,78.0;73.8;68.9,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:59
+B,starrocks,warm,tpch,q04,67.7,61.3,64.8,64.8,67.7;61.3;64.8,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:59
+B,starrocks,warm,tpch,q05,61.1,63.6,71.1,63.6,61.1;63.6;71.1,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:22:59
+B,starrocks,warm,tpch,q06,19.5,17.7,18.7,18.7,19.5;17.7;18.7,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:00
+B,starrocks,warm,tpch,q07,94.5,97.9,95.2,95.2,94.5;97.9;95.2,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:00
+B,starrocks,warm,tpch,q08,128.3,121.4,112.2,121.4,128.3;121.4;112.2,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:01
+B,starrocks,warm,tpch,q09,138.5,146.7,124.4,138.5,138.5;146.7;124.4,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:01
+B,starrocks,warm,tpch,q10,97.5,107.5,84.5,97.5,97.5;107.5;84.5,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:02
+B,starrocks,warm,tpch,q11,40.4,34.0,31.8,34.0,40.4;34.0;31.8,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:02
+B,starrocks,warm,tpch,q12,65.8,64.9,53.1,64.9,65.8;64.9;53.1,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:03
+B,starrocks,warm,tpch,q13,447.2,443.4,453.7,447.2,447.2;443.4;453.7,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:05
+B,starrocks,warm,tpch,q14,17.4,22.4,19.3,19.3,17.4;22.4;19.3,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:05
+B,starrocks,warm,tpch,q15,45.3,42.5,38.0,42.5,45.3;42.5;38.0,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:05
+B,starrocks,warm,tpch,q16,53.2,55.6,49.1,53.2,53.2;55.6;49.1,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:05
+B,starrocks,warm,tpch,q17,29.4,28.2,31.8,29.4,29.4;28.2;31.8,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:06
+B,starrocks,warm,tpch,q18,106.5,107.9,120.4,107.9,106.5;107.9;120.4,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:06
+B,starrocks,warm,tpch,q19,77.7,77.7,78.4,77.7,77.7;77.7;78.4,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:07
+B,starrocks,warm,tpch,q20,43.9,40.7,42.8,42.8,43.9;40.7;42.8,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:07
+B,starrocks,warm,tpch,q21,180.7,161.8,168.7,168.7,180.7;161.8;168.7,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:08
+B,starrocks,warm,tpch,q22,57.7,54.7,57.7,57.7,57.7;54.7;57.7,,,,OK,,SET enable_query_cache = true;SET enable_scan_datacache = true;SET enable_populate_datacache = true,2026-09-08 00:23:08

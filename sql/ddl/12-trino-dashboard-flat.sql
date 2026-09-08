@@ -7,7 +7,7 @@
 -- SSB 원본을 쓰려면 별도 생성 후 sql/dashboard 쿼리를 교체할 것.
 -- ===========================================================================
 CREATE TABLE IF NOT EXISTS iceberg.${SCHEMA}.lineitem_flat
-WITH (format = 'PARQUET', partitioning = ARRAY['month(l_shipdate)'])
+WITH (format = 'PARQUET'${LINEITEM_PART})
 AS
 SELECT
     l.l_orderkey, l.l_linenumber, l.l_quantity, l.l_extendedprice,

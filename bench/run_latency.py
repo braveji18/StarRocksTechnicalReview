@@ -9,9 +9,14 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 from . import config, engines, resultio, sqlfile
+
+
+# 리다이렉트 시에도 진행 상황이 바로 보이도록 (장시간 적재/측정 대비)
+sys.stdout.reconfigure(line_buffering=True)
 
 SUITES = {
     "tpch": ("tpch", config.SQL_DIR / "tpch"),

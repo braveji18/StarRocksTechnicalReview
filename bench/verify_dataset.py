@@ -6,9 +6,14 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from decimal import Decimal
 
 from . import engines, resultio
+
+
+# 리다이렉트 시에도 진행 상황이 바로 보이도록 (장시간 적재/측정 대비)
+sys.stdout.reconfigure(line_buffering=True)
 
 TABLES = ["lineitem", "orders", "customer", "part",
           "partsupp", "supplier", "nation", "region"]

@@ -116,3 +116,45 @@ CREATE TABLE IF NOT EXISTS ${SR_DB}.region (
 DUPLICATE KEY (r_regionkey)
 DISTRIBUTED BY HASH (r_regionkey) BUCKETS 1
 PROPERTIES ("replication_num" = "${REPLICAS}");
+
+-- ---------------------------------------------------------------------------
+-- P2 대시보드 워크로드용 비정규화 테이블 (Track B)
+-- 레이크 쪽 iceberg.${SCHEMA}.lineitem_flat 과 같은 역할을 한다.
+-- 이 테이블이 없으면 Track B 에서 P2 를 아예 측정할 수 없다.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ${SR_DB}.lineitem_flat (
+    l_orderkey      BIGINT        NOT NULL,
+    l_linenumber    INT           NOT NULL,
+    l_shipdate      DATE          NOT NULL,
+    l_quantity      DECIMAL(15,2) NOT NULL,
+    l_extendedprice DECIMAL(15,2) NOT NULL,
+    l_discount      DECIMAL(15,2) NOT NULL,
+    l_tax           DECIMAL(15,2) NOT NULL,
+    l_returnflag    VARCHAR(1)    NOT NULL,
+    l_linestatus    VARCHAR(1)    NOT NULL,
+    l_shipmode      VARCHAR(10)   NOT NULL,
+    l_shipinstruct  VARCHAR(25)   NOT NULL,
+    o_orderdate     DATE          NOT NULL,
+    o_orderpriority VARCHAR(15)   NOT NULL,
+    o_orderstatus   VARCHAR(1)    NOT NULL,
+    o_totalprice    DECIMAL(15,2) NOT NULL,
+    c_custkey       INT           NOT NULL,
+    c_name          VARCHAR(25)   NOT NULL,
+    c_mktsegment    VARCHAR(10)   NOT NULL,
+    c_acctbal       DECIMAL(15,2) NOT NULL,
+    cust_nation     VARCHAR(25)   NOT NULL,
+    cust_region     VARCHAR(25)   NOT NULL,
+    s_suppkey       INT           NOT NULL,
+    supp_name       VARCHAR(25)   NOT NULL,
+    supp_nation     VARCHAR(25)   NOT NULL,
+    supp_region     VARCHAR(25)   NOT NULL,
+    p_partkey       INT           NOT NULL,
+    p_brand         VARCHAR(10)   NOT NULL,
+    p_type          VARCHAR(25)   NOT NULL,
+    p_size          INT           NOT NULL,
+    p_container     VARCHAR(10)   NOT NULL,
+    revenue         DECIMAL(38,4) NOT NULL
+)
+DUPLICATE KEY (l_orderkey, l_linenumber, l_shipdate)
+DISTRIBUTED BY HASH (l_orderkey) BUCKETS ${BUCKETS}
+PROPERTIES ("replication_num" = "${REPLICAS}");

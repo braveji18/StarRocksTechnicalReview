@@ -1,0 +1,9 @@
+track,engine,cache,benchmark,query_count,geomean_ms,total_ms,failed_queries,p95_ms,ts
+A,trino,warm,tpch,22,177.2,4304.4,0,390.1,2026-09-08 00:22:31
+B,trino,warm,tpch,22,128.1,3093.2,0,221.6,2026-09-08 00:22:48
+A,starrocks,warm,tpch,22,72.6,1767.3,0,142.3,2026-09-08 00:22:57
+B,starrocks,warm,tpch,22,65.3,1913.1,0,167.2,2026-09-08 00:23:08
+A,trino,warm,dashboard,8,64.9,523.1,0,78.3,2026-09-08 00:23:17
+B,trino,warm,dashboard,8,62.4,501.5,0,72.2,2026-09-08 00:23:19
+A,starrocks,warm,dashboard,8,30.0,240.8,0,32.9,2026-09-08 00:23:21
+B,starrocks,warm,dashboard,8,13.0,105.1,0,16.5,2026-09-08 00:24:48

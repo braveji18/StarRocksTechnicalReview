@@ -6,10 +6,15 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import time
 from pathlib import Path
 
 from . import config, engines, resultio, sqlfile
+
+
+# 리다이렉트 시에도 진행 상황이 바로 보이도록 (장시간 적재/측정 대비)
+sys.stdout.reconfigure(line_buffering=True)
 
 DDL = config.SQL_DIR / "ddl"
 
@@ -59,6 +64,9 @@ def main() -> int:
     ap.add_argument("--preagg", action="store_true",
                     help="Track B 사전 계산 생성 (StarRocks MV + Trino 사전집계 테이블). "
                          "두 엔진에 반드시 함께 적용해야 대칭성이 유지된다.")
+    ap.add_argument("--skip-external-catalog", action="store_true",
+                    help="StarRocks 외부 카탈로그 생성을 건너뛴다. 이미 등록된 카탈로그를 "
+                         "재사용할 때 사용 (DDL 이 DROP CATALOG 를 포함하므로 기존 랩에서는 필수)")
     ap.add_argument("--timeout", type=int, default=7200)
     args = ap.parse_args()
 
@@ -85,6 +93,10 @@ def main() -> int:
         with engines.StarRocksEngine(track=engines.TRACK_RAW) as eng:
             eng.ping()
             steps = list(SR_STEPS)
+            if args.skip_external_catalog:
+                steps = [s for s in steps if s[0] != "external-catalog"]
+                print("  외부 카탈로그 생성 건너뜀 "
+                      f"(기존 {config.get('SR_EXTERNAL_CATALOG')} 재사용)")
             if args.preagg:
                 steps.append(("mv", SR_OPTIONAL["mv"]))
             for step, fname in steps:

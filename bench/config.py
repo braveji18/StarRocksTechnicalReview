@@ -41,6 +41,8 @@ _DEFAULTS = {
     "P3_WARMUP_SEC": "120",
     "SLA_DASHBOARD_P95_MS": "3000",
     "SLA_TARGET_CONCURRENT_USERS": "50",
+    "TPCH_SCHEMA": "",            # 비우면 sf<SCALE_FACTOR>. tiny(=SF0.01) 등 지정 가능
+    "PARTITION_GRAIN": "month",   # month | year | none - 규모에 맞춰 조절
     "SR_BUCKETS": "16",
     "SR_REPLICAS": "1",
 }
@@ -78,14 +80,36 @@ def get_int(key: str, default: int | None = None) -> int:
 
 
 def warehouse() -> str:
-    return f"s3://{get('S3_BUCKET')}/warehouse"
+    """Iceberg 웨어하우스 루트.
+
+    기존 레이크에 붙일 때는 그쪽 경로 규약을 따라야 하므로 WAREHOUSE 로 직접
+    지정할 수 있게 한다 (docs/09 §3.1). 미지정 시 버킷 하위 warehouse/ 를 쓴다.
+    """
+    explicit = get("WAREHOUSE", "")
+    return explicit or f"s3://{get('S3_BUCKET')}/warehouse"
 
 
 def substitutions() -> dict[str, str]:
     """sql/ddl 템플릿의 ${...} 치환 테이블."""
+    grain = get("PARTITION_GRAIN").lower()
+
+    def _part(col: str) -> str:
+        """Iceberg 파티션 절.
+
+        파티션이 지나치게 잘게 쪼개지면 파티션 라이터가 파티션마다 버퍼를 잡아
+        메모리가 폭증한다 (SF1 에 month 를 쓰면 84개). 규모에 맞춰 조절한다.
+        """
+        if grain in ("none", ""):
+            return ""
+        return f", partitioning = ARRAY['{grain}({col})']"
+
     return {
         "SCHEMA": get("LAKE_SCHEMA"),
+        "LINEITEM_PART": _part("l_shipdate"),
+        "ORDERS_PART": _part("o_orderdate"),
+        "PARTITION_GRAIN": grain,
         "SF": get("SCALE_FACTOR"),
+        "TPCH_SCHEMA": get("TPCH_SCHEMA") or f"sf{get('SCALE_FACTOR')}",
         "WAREHOUSE": warehouse(),
         "SR_CATALOG": get("SR_EXTERNAL_CATALOG"),
         "SR_DB": get("SR_NATIVE_DB"),
