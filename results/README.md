@@ -8,6 +8,8 @@
 | 파일 | 내용 |
 |---|---|
 | `measurement-conditions.md` | 측정 조건 및 채점 불가 사유 (필독) |
+| `performance-report.md` | 성능 측정 결과 정리 |
+| `scoring/final_score.md` | 채점 집계 (측정 항목만 반영, 나머지는 0점 + 경고) |
 | `dataset/load_timing.csv` | 적재 단계별 소요 시간 (P5 입력) |
 | `functional/dataset_verification.csv` | 두 엔진 행수·체크섬 대조 (하드 게이트) |
 | `performance/p1_latency_tpch.csv` | TPC-H 22개 쿼리별 원시 측정값 |
